@@ -1,0 +1,36 @@
+{
+    "name": "thread-busy",
+    "version": "1.0.0",
+    "description": "Sneha's prototype",
+    "main": "main.js",
+    "scripts": {
+      "start": "http-server",
+      "build": "babel src -d dist --presets=@babel/preset-env",
+      "watch": "babel src -d dist --presets=@babel/preset-env --watch",
+      "main": "node main.js"
+    },
+    "keywords": [
+      "web",
+      "development",
+      "frontend",
+      "JavaScript",
+      "indexedDB"
+    ],
+    "author": "Sneha",
+    "license": "ISC",
+    "devDependencies": {
+      "@babel/cli": "^7.23.9",
+      "@babel/core": "^7.24.0",
+      "@babel/preset-env": "^7.24.0",
+      "http-server": "^14.1.1",
+      "typescript": "^5.4.2",
+      "webpack": "^5.90.3",
+      "webpack-cli": "^5.1.4"
+    },
+    "dependencies": {
+      "ansi-colors": "^4.1.3",
+      "cli-progress": "^3.12.0",
+      "progressbar": "^1.3.0"
+    }
+  }
+  
