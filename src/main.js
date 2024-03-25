@@ -9,6 +9,11 @@ document.getElementById('fetch-batch-key-fwd').addEventListener('click', (event)
     simulateUiThreadBusy(buttonId);
 });
 
+document.getElementById('fetch-batch-key-direction-fwd').addEventListener('click', (event) => {
+    const buttonId = event.target.id;
+    simulateUiThreadBusy(buttonId);
+});
+
 // Function to simulate UI thread busyness
 function simulateUiThreadBusy(buttonId) {
     console.log('Simulating UI thread busyness...');
@@ -21,7 +26,15 @@ function simulateUiThreadBusy(buttonId) {
         if (event.data && event.data.action === 'recordsFetched') {
             console.log("UI Thread: Received fetched record batch from Worker.");
             // Handle fetched records
-            displayFetchedRecordsFromWorker(event.data.records);
+            switch (buttonId) {
+                case "fetch-batch-fwd":
+                case "fetch-batch-key-fwd":
+                    displayFetchedRecordsFromWorker(event.data.records);
+                    break;
+                
+                case "fetch-batch-key-direction-fwd":
+                    displayFetchedRecordsByKeysFromWorker(event.data.records);
+            }
         }
     });
 
@@ -59,7 +72,7 @@ function displayFetchedRecordsFromWorker(records) {
     const recordsList = document.getElementById('records-list');
     records.forEach(employee => {
         const listItem = document.createElement('div');
-        listItem.textContent = `${employee.id} -${employee.name} - ${employee.job} - ${employee.employer}`;;
+        listItem.textContent = `${employee.id} -${employee.name} - ${employee.job} - ${employee.employer}`;
         recordsList.appendChild(listItem);
     });
 
@@ -69,6 +82,25 @@ function displayFetchedRecordsFromWorker(records) {
     // Append the list item to the employee list container
     recordsList.appendChild(li);
 }
+
+function displayFetchedRecordsByKeysFromWorker(records) {
+    const recordsList = document.getElementById('records-list');
+  
+    records.forEach(employee => {
+      const listItem = document.createElement('div');
+      listItem.textContent = `${employee.key} - ${employee.value.name} - ${employee.value.job} - ${employee.value.employer}`;
+      recordsList.appendChild(listItem);
+    });
+  
+    const li = document.createElement('li');
+    li.textContent = "------------------ Batch End ------------------";;
+  
+    // Append the list item to the employee list container
+    recordsList.appendChild(li);
+}
+
+//=================================================================
+
 
 let db;
 const request = indexedDB.open('employeeManagerDB', 1);
