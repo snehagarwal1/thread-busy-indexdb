@@ -26,6 +26,11 @@ document.getElementById('fetch-batch-key-direction-reverse').addEventListener('c
     simulateUiThreadBusy(buttonId);
 });
 
+document.getElementById('fetch-batch-key-reverse').addEventListener('click', (event) => {
+    const buttonId = event.target.id;
+    simulateUiThreadBusy(buttonId);
+});
+
 // Function to simulate UI thread busyness
 function simulateUiThreadBusy(buttonId) {
     console.log('Simulating UI thread busyness...');
@@ -42,6 +47,7 @@ function simulateUiThreadBusy(buttonId) {
                 case "fetch-batch-fwd":
                 case "fetch-batch-key-fwd":
                 case "fetch-batch-reverse":
+                case "fetch-batch-key-reverse":
                     displayFetchedRecordsFromWorker(event.data.records);
                     break;
                 
