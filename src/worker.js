@@ -80,7 +80,7 @@ function fetchEmployeesByKeysInBatch(store, batchSize, keyRangeForBatch, keys, r
   }
 }
 
-//-----------------GetAllEntries()----------------------------------
+//-----------------GetAllEntries('next')----------------------------------
 
 function fetchBatchKeyDirectionForward(store) {
     fetchEmployeesInBatchWithNewApi(store, 10, null, null);
@@ -99,6 +99,7 @@ function fetchEmployeesInBatchWithNewApi(store, batchSize, keyRange, records) {
     store.getAllEntries(keyRange, batchSize, 'next').onsuccess = e => {
         records = e.target.result;
         console.log(records);
+
         // Post a message back to the main thread with the fetched records
         self.postMessage({ action: 'recordsFetched', records: records});
 
@@ -154,7 +155,34 @@ function fetchRecordsInBatchReverse(store, batchSize, keyRangeReverse) {
     };
 }
 
-//-----------------------------------------------------------------------------
+//-----------------------------getAllEntries('prev')---------------------------
+function fetchBatchKeyDirectionReverse(store){
+    fetchRecordsInBatchWithNewApi(store, 10, null, null);
+}
+
+function fetchMoreInReverseWithNewApi(store, batchSize, keyRange, records) {
+      if (records && records.length === batchSize) {
+        keyRange = IDBKeyRange.upperBound(records.at(-1).key, true);
+        fetchRecordsInBatchWithNewApi(store, batchSize, keyRange,records);
+    }
+};
+
+function fetchRecordsInBatchWithNewApi(store, batchSize, keyRange, records) {
+    const start = performance.now();
+   
+    store.getAllEntries(keyRange, batchSize, 'prev').onsuccess = e => {
+        records = e.target.result;
+
+        // Post a message back to the main thread with the fetched records
+        self.postMessage({ action: 'recordsFetched', records: records});
+
+        fetchMoreInReverseWithNewApi(store, batchSize, keyRange, records);
+
+        const end = performance.now();
+        console.log(`getAllEntries('prev'): Employees fetched
+        in ${(end - start).toFixed(2)} milliseconds.`);
+    }
+}
 
 //---------------------------Event Listener------------------------------------
 // Listen for messages from the main thread
@@ -191,7 +219,10 @@ self.addEventListener('message', event => {
                 case "fetch-batch-reverse":
                     fetchBatchReverse(objectStore);
                     break;
-                    
+                
+                case "fetch-batch-key-direction-reverse":
+                    fetchBatchKeyDirectionReverse(objectStore);
+                    break;
                 // TODO: add more cases based on fetch api
             }
         };
