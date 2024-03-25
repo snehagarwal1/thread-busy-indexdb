@@ -4,10 +4,10 @@ document.getElementById('fetch-batch-fwd').addEventListener('click', (event) => 
     simulateUiThreadBusy(buttonId);
 });
 
-// document.getElementById('fetch-batch-key-fwd').addEventListener('click', (event) => {
-//     const buttonId = event.target.id;
-//     simulateBusyUIThread(buttonId);
-// });
+document.getElementById('fetch-batch-key-fwd').addEventListener('click', (event) => {
+    const buttonId = event.target.id;
+    simulateUiThreadBusy(buttonId);
+});
 
 // Function to simulate UI thread busyness
 function simulateUiThreadBusy(buttonId) {
