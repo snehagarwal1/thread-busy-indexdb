@@ -1,7 +1,6 @@
 // Function to fetch records from IndexedDB asynchronously
-function fetchBatchForward(store) {
-
-    fetchEmployeesInBatch(store, 10, null);
+function fetchBatchForward(store, batchSize) {
+    fetchEmployeesInBatch(store, batchSize, null);
 }
 
 //-------GetAll() API for Batch retriving records in forward direction ----------
@@ -40,9 +39,9 @@ function fetchMore(store, records, batchSize, keyRange) {
 
 //-----------GetAllKeys()------------------------------------------------------
 // Function to fetch records from IndexedDB asynchronously
-function fetchBatchKeyForward(store) {
+function fetchBatchKeyForward(store, batchSize) {
 
-    triggerFetchEmployeesByKeysInBatch(store, 10, 1, null, null);
+    triggerFetchEmployeesByKeysInBatch(store, batchSize, 1, null, null);
 }
 
 function triggerFetchEmployeesByKeysInBatch(store, batchSize, keyStart, keys, records) {
@@ -87,8 +86,8 @@ function fetchEmployeesByKeysInBatch(store, batchSize, keyRangeForBatch, keys, r
 
 //-----------------GetAllEntries('next')----------------------------------
 
-function fetchBatchKeyDirectionForward(store) {
-    fetchEmployeesInBatchWithNewApi(store, 10, null, null);
+function fetchBatchKeyDirectionForward(store, batchSize) {
+    fetchEmployeesInBatchWithNewApi(store, batchSize, null, null);
 }
 
 function fetchMoreWithNewApi(store, batchSize, keyRange, records) {
@@ -103,7 +102,7 @@ function fetchEmployeesInBatchWithNewApi(store, batchSize, keyRange, records) {
     
     store.getAllEntries(keyRange, batchSize, 'next').onsuccess = e => {
         records = e.target.result;
-        console.log(records);
+        //console.log(records);
 
         // Post a message back to the main thread with the fetched records
         self.postMessage({ action: 'recordsFetched', records: records});
@@ -117,8 +116,8 @@ function fetchEmployeesInBatchWithNewApi(store, batchSize, keyRange, records) {
 }
 
 //--------------------------OpenCursor() Reverse dir---------------------------
-function fetchBatchReverse(store) {
-    fetchRecordsInBatchReverse(store, 10, null);
+function fetchBatchReverse(store, batchSize) {
+    fetchRecordsInBatchReverse(store, batchSize, null);
 }
 
 function fetchRecordsInBatchReverse(store, batchSize, keyRangeReverse) {
@@ -161,8 +160,8 @@ function fetchRecordsInBatchReverse(store, batchSize, keyRangeReverse) {
 }
 
 //-----------------------------getAllEntries('prev')---------------------------
-function fetchBatchKeyDirectionReverse(store){
-    fetchRecordsInBatchWithNewApi(store, 10, null, null);
+function fetchBatchKeyDirectionReverse(store, batchSize) { 
+    fetchRecordsInBatchWithNewApi(store, batchSize, null, null);
 }
 
 function fetchMoreInReverseWithNewApi(store, batchSize, keyRange, records) {
@@ -190,8 +189,8 @@ function fetchRecordsInBatchWithNewApi(store, batchSize, keyRange, records) {
 }
 
 //----------------------------OpenKeyCursor('prev')----------------------------
-function fetchBatchKeyReverse(store){
-    fetchRecordsInBatchByKeysReverse(store, 10, null, []);
+function fetchBatchKeyReverse(store, batchSize) {
+    fetchRecordsInBatchByKeysReverse(store, batchSize, null, []);
 } 
 
 function fetchRecordsInBatchByKeysReverse(objectStore, batchSize, cursor, totalKeys) {
@@ -225,13 +224,13 @@ function fetchRecordsInBatchByKeysReverse(objectStore, batchSize, cursor, totalK
 
 }
     
-
 //---------------------------Event Listener------------------------------------
 // Listen for messages from the main thread
 self.addEventListener('message', event => {
     if (event.data) {
-
-        const messageActionType = event.data.action;
+        const messageData = event.data;
+        const messageActionType = messageData.action;
+        const batchSize = messageData.batchSize; // New batchSize parameter
 
         // Open the IndexedDB database
         const indexDbOpenRequest = indexedDB.open('employeeManagerDB', 1);
@@ -247,27 +246,27 @@ self.addEventListener('message', event => {
             switch (messageActionType)
             {
                 case "fetch-batch-fwd":
-                    fetchBatchForward(objectStore);
+                    fetchBatchForward(objectStore, batchSize);
                     break;
                 
                 case "fetch-batch-key-fwd":
-                    fetchBatchKeyForward(objectStore);
+                    fetchBatchKeyForward(objectStore, batchSize);
                     break;
 
                 case "fetch-batch-key-direction-fwd":
-                    fetchBatchKeyDirectionForward(objectStore);
+                    fetchBatchKeyDirectionForward(objectStore, batchSize);
                     break;
 
                 case "fetch-batch-reverse":
-                    fetchBatchReverse(objectStore);
+                    fetchBatchReverse(objectStore, batchSize);
                     break;
                 
                 case "fetch-batch-key-direction-reverse":
-                    fetchBatchKeyDirectionReverse(objectStore);
+                    fetchBatchKeyDirectionReverse(objectStore, batchSize);
                     break;
 
                 case "fetch-batch-key-reverse":
-                    fetchBatchKeyReverse(objectStore);
+                    fetchBatchKeyReverse(objectStore, batchSize);
                     break;
             }
         };
