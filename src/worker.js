@@ -19,6 +19,11 @@ function fetchEmployeesInBatch(store, batchSize, keyRange) {
         const end = performance.now();
         console.log(`Worker: Employees batch of ${batchSize} fetched
             in ${(end - start).toFixed(2)} ms.`);
+
+        // // Introduce a delay before fetching the next batch
+        // setTimeout(() => {
+        //     fetchMore(store, records, batchSize, keyRange);
+        // }, 100); // 100ms delay
     };
 }
 

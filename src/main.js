@@ -31,6 +31,9 @@ document.getElementById('fetch-batch-key-reverse').addEventListener('click', (ev
     simulateUiThreadBusy(buttonId);
 });
 
+
+
+
 // Function to simulate UI thread busyness
 function simulateUiThreadBusy(buttonId) {
     console.log('Simulating UI thread busyness...');
@@ -63,28 +66,44 @@ function simulateUiThreadBusy(buttonId) {
     // Note: buttonId is the same as the fetch api type to be used.
     worker.postMessage({ action: buttonId });
 
+    const startTime = performance.now();
+    const totalRunTime = 10000; // 10 secs
+    const breakDuration = 100; // 100 ms
+
     // Schedule a task to keep the UI thread busy
     scheduler.postTask(() => {
+        doFakeCalculation(totalRunTime, startTime, breakDuration);
+    });
+}
+
+function doFakeCalculation(totalRunTime, startTime, breakDuration) {
         // Display "started" status
         document.getElementById('fake-calculation-task-status').textContent = 'UI Thread Busy: Task Started';
         // Simulate fake calculation task
         console.log('UI thread is now busy.');
 
-        const startTime = performance.now();
-        while ((performance.now() - startTime) < 10000) {
-            // Fake calculation task - run while loop for 10 seconds to simulate UI thread busy
+        // generates random number between 1 to 2 seconds
+        const busyTimeBeforeBreak = Math.random() * 1000 + 1000;
+        const resetStartTime = performance.now(); 
+
+        while ((performance.now() - startTime) < 5000) {
+            
+            if (performance.now() - resetStartTime  >= busyTimeBeforeBreak)
+            {
+                console.log(`Should break`);
+                // Call again after "breakdDuration"
+                setTimeout(() => {
+                    doFakeCalculation(totalRunTime, startTime, breakDuration)
+                }, 
+                breakDuration);
+
+                break;
+            }
+
         }
         console.log('UI thread is now free.');
         // Display "completed" status
         document.getElementById('fake-calculation-task-status').textContent = 'UI Thread Busy: Task Completed';
-    });
-
-    /*
-    // Simulate UI thread busyness with a delay of 100 milliseconds
-    setTimeout(() => {
-        console.log('UI thread is now busy.');
-    }, 100);
-    */
 }
 
 // Function to display fetched records
