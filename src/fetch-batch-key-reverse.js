@@ -2,35 +2,46 @@ function fetchBatchKeyReverse(store, batchSize) {
     fetchRecordsInBatchByKeysReverse(store, batchSize, null, []);
 } 
 
-function fetchRecordsInBatchByKeysReverse(objectStore, batchSize, cursor, totalKeys) {
-    // Open a key cursor at the end of the range (using 'prev' direction to iterate in reverse)
-    const request = cursor ? cursor.continue(null, 'prev') : objectStore.openKeyCursor(null, 'prev');
+function fetchRecordsInBatchByKeysReverse(store, batchSize, keyRangeReverse, records) {
+    const start = performance.now();
 
-    request.onerror = (event) => {
-        console.error('Error opening key cursor:', event.target.error);
-        // Handle the error here
-    };
+    let cursorRequest;
 
-    request.onsuccess = (event) => {
+    // Open a cursor with direction 'prev' to fetch records in reverse order.
+    cursorRequest = store.openKeyCursor(keyRangeReverse, 'prev');
+
+    cursorRequest.onsuccess = function(event) {
         const cursor = event.target.result;
-        if (cursor) {
-            // Handle the key obtained from the cursor
-            const key = cursor.key;
-            console.log('Key:', key);
+        if (cursor && records.length < batchSize) {
 
-            // Continue to the next batch of keys
-            if (totalKeys < batchSize) {
-
-                // Post a message back to the main thread with the fetched records
-                self.postMessage({ action: 'recordsFetched', records: records});
-
-                fetchRecordsInBatchByKeysReverse(objectStore, batchSize, cursor, totalKeys + 1);
-            }
+            store.get(cursor.primaryKey).onsuccess = function(event) {
+                records.push(event.target.result);
+                cursor.continue(); // Move to the previous record
+            };
+            
         } else {
-            // Finished iterating through all keys
-            console.log('Total keys:', totalKeys);
+            self.postMessage({ action: 'recordsFetched', records: records});
+
+            if (cursor) {
+                // Update keyRangeReverse for the next batch
+                keyRangeReverse = IDBKeyRange.upperBound(records.at(-1).id, true);
+                // Fetch more records
+                fetchRecordsInBatchByKeysReverse(store, batchSize, keyRangeReverse, []);
+
+                const end = performance.now();
+                console.log(`openKeyCursor('prev'): Employees fetched
+                in ${(end - start).toFixed(2)} milliseconds.`);
+            } else {
+                // log last fetched batches time.
+                const end = performance.now();
+                console.log(`openKeyCursor('prev'): Employees fetched
+                in ${(end - start).toFixed(2)} milliseconds.`);
+
+                // No more records to fetch
+                console.log('All records fetched in reverse order.');
+            }
         }
     };
-
 }
-    
+
+export {fetchBatchKeyReverse};

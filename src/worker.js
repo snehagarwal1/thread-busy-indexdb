@@ -1,4 +1,4 @@
-//-------GetAll() API for Batch retriving records in forward direction --------
+//-------GetAll() API for Batch retriving records in forward direction ------
 //import { fetchBatchForward } from 'fetch-batch-fwd';
 //fetchBatchForward = require('fetch-batch-fwd');
 
@@ -35,8 +35,9 @@ function fetchMore(store, records, batchSize, keyRange) {
     }
 };
 
-//---------------------------------getAllKeys()--------------------------------
+//---------------------------------getAllKeys()------------------------------
 // Function to fetch records from IndexedDB asynchronously
+
 function fetchBatchKeyForward(store, batchSize) {
 
     triggerFetchEmployeesByKeysInBatch(store, batchSize, 1, null, null);
@@ -82,7 +83,7 @@ function fetchEmployeesByKeysInBatch(store, batchSize, keyRangeForBatch, keys, r
   }
 }
 
-//-----------------------GetAllEntries('next')----------------------------------
+//-----------------------GetAllEntries('next')--------------------------------
 
 function fetchBatchKeyDirectionForward(store, batchSize) {
     fetchEmployeesInBatchWithNewApi(store, batchSize, null, null);
@@ -113,7 +114,7 @@ function fetchEmployeesInBatchWithNewApi(store, batchSize, keyRange, records) {
     }
 }
 
-//--------------------------OpenCursor() Reverse dir---------------------------
+//--------------------------OpenCursor() Reverse dir-------------------------
 function fetchBatchReverse(store, batchSize) {
     fetchRecordsInBatchReverse(store, batchSize, null);
 }
@@ -157,7 +158,7 @@ function fetchRecordsInBatchReverse(store, batchSize, keyRangeReverse) {
     };
 }
 
-//-----------------------------getAllEntries('prev')---------------------------
+//-----------------------------getAllEntries('prev')-------------------------
 function fetchBatchKeyDirectionReverse(store, batchSize) { 
     fetchRecordsInBatchWithNewApi(store, batchSize, null, null);
 }
@@ -186,42 +187,54 @@ function fetchRecordsInBatchWithNewApi(store, batchSize, keyRange, records) {
     }
 }
 
-//----------------------------OpenKeyCursor('prev')----------------------------
+//----------------------------OpenKeyCursor('prev')--------------------------
 function fetchBatchKeyReverse(store, batchSize) {
     fetchRecordsInBatchByKeysReverse(store, batchSize, null, []);
 } 
 
-function fetchRecordsInBatchByKeysReverse(objectStore, batchSize, cursor, totalKeys) {
-    // Open a key cursor at the end of the range (using 'prev' direction to iterate in reverse)
-    const request = cursor ? cursor.continue(null, 'prev') : objectStore.openKeyCursor(null, 'prev');
+function fetchRecordsInBatchByKeysReverse(store, batchSize, keyRangeReverse, records) {
+    const start = performance.now();
 
-    request.onerror = (event) => {
-        console.error('Error opening key cursor:', event.target.error);
-    };
+    let cursorRequest;
 
-    request.onsuccess = function(event) {
+    // Open a cursor with direction 'prev' to fetch records in reverse order.
+    cursorRequest = store.openKeyCursor(keyRangeReverse, 'prev');
+
+    cursorRequest.onsuccess = function(event) {
         const cursor = event.target.result;
-        if (cursor) {
-            // Handle the key obtained from the cursor
-            const key = cursor.key;
-            console.log('Key:', key);
+        if (cursor && records.length < batchSize) {
 
-            // Continue to the next batch of keys
-            if (totalKeys < batchSize) {
+            store.get(cursor.primaryKey).onsuccess = function(event) {
+                records.push(event.target.result);
+                cursor.continue(); // Move to the previous record
+            };
 
-                // Post a message back to the main thread with the fetched records
-                self.postMessage({ action: 'recordsFetched', records: totalKeys});
-
-                fetchRecordsInBatchByKeysReverse(objectStore, batchSize, cursor, totalKeys + 1);
-            }
         } else {
-            // Finished iterating through all keys
-            console.log('Total keys:', totalKeys);
+            self.postMessage({ action: 'recordsFetched', records: records});
+
+            if (cursor) {
+                // Update keyRangeReverse for the next batch
+                keyRangeReverse = IDBKeyRange.upperBound(records.at(-1).id, true);
+                // Fetch more records
+                fetchRecordsInBatchByKeysReverse(store, batchSize, keyRangeReverse, []);
+
+                const end = performance.now();
+                console.log(`openKeyCursor('prev'): Employees fetched
+                in ${(end - start).toFixed(2)} milliseconds.`);
+            } else {
+                // log last fetched batches time.
+                const end = performance.now();
+                console.log(`openKeyCursor('prev'): Employees fetched
+                in ${(end - start).toFixed(2)} milliseconds.`);
+
+                // No more records to fetch
+                console.log('All records fetched in reverse order.');
+            }
         }
     };
 }
 
-//---------------------------Event Listener------------------------------------
+//---------------------------Event Listener----------------------------------
 // Listen for messages from the main thread
 self.addEventListener('message', event => {
     if (event.data) {
