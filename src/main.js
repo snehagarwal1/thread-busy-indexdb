@@ -87,7 +87,7 @@ function doFakeCalculation(totalRunTime, startTime, breakDuration) {
         const busyTimeBeforeBreak = Math.random() * 1000 + 1000;
         const resetStartTime = performance.now(); 
 
-        while ((performance.now() - startTime) < 5000) {
+        while ((performance.now() - startTime) < 10000) {
             
             if (performance.now() - resetStartTime  >= busyTimeBeforeBreak)
             {
