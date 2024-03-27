@@ -1,9 +1,11 @@
+//-------GetAll() API for Batch retriving records in forward direction --------
+//import { fetchBatchForward } from 'fetch-batch-fwd';
+//fetchBatchForward = require('fetch-batch-fwd');
+
 // Function to fetch records from IndexedDB asynchronously
 function fetchBatchForward(store, batchSize) {
     fetchEmployeesInBatch(store, batchSize, null);
 }
-
-//-------GetAll() API for Batch retriving records in forward direction ----------
 
 function fetchEmployeesInBatch(store, batchSize, keyRange) {
     const start = performance.now();
@@ -33,11 +35,7 @@ function fetchMore(store, records, batchSize, keyRange) {
     }
 };
 
-//import { fetchBatchForward } from 'fetch-batch-fwd';
-//fetchBatchForward = require('fetch-batch-fwd');
-
-
-//-----------GetAllKeys()------------------------------------------------------
+//---------------------------------getAllKeys()--------------------------------
 // Function to fetch records from IndexedDB asynchronously
 function fetchBatchKeyForward(store, batchSize) {
 
@@ -84,7 +82,7 @@ function fetchEmployeesByKeysInBatch(store, batchSize, keyRangeForBatch, keys, r
   }
 }
 
-//-----------------GetAllEntries('next')----------------------------------
+//-----------------------GetAllEntries('next')----------------------------------
 
 function fetchBatchKeyDirectionForward(store, batchSize) {
     fetchEmployeesInBatchWithNewApi(store, batchSize, null, null);
@@ -221,9 +219,8 @@ function fetchRecordsInBatchByKeysReverse(objectStore, batchSize, cursor, totalK
             console.log('Total keys:', totalKeys);
         }
     };
-
 }
-    
+
 //---------------------------Event Listener------------------------------------
 // Listen for messages from the main thread
 self.addEventListener('message', event => {
