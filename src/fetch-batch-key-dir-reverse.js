@@ -1,5 +1,5 @@
-function fetchBatchKeyDirectionReverse(store){
-    fetchRecordsInBatchWithNewApi(store, 10, null, null);
+function fetchBatchKeyDirectionReverse(store, batchSize) {
+    fetchRecordsInBatchWithNewApi(store, batchSize, null, null);
 }
 
 function fetchMoreInReverseWithNewApi(store, batchSize, keyRange, records) {

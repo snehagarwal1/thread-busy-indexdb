@@ -1,5 +1,5 @@
-function fetchBatchKeyReverse(store){
-    fetchRecordsInBatchByKeysReverse(store, 10, null, []);
+function fetchBatchKeyReverse(store, batchSize) {
+    fetchRecordsInBatchByKeysReverse(store, batchSize, null, []);
 } 
 
 function fetchRecordsInBatchByKeysReverse(objectStore, batchSize, cursor, totalKeys) {

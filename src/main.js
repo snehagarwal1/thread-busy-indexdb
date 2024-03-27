@@ -17,13 +17,11 @@ document.getElementById('fetch-batch-key-direction-fwd').addEventListener('click
     simulateUiThreadBusy(buttonId, batchSize);
 });
 
-
 document.getElementById('fetch-batch-reverse').addEventListener('click', (event) => {
     const buttonId = event.target.id;
     const batchSize = parseInt(document.getElementById('batchSize').value);
     simulateUiThreadBusy(buttonId, batchSize);
 });
-
 
 document.getElementById('fetch-batch-key-direction-reverse').addEventListener('click', (event) => {
     const buttonId = event.target.id;
@@ -142,7 +140,6 @@ function displayFetchedRecordsByKeysFromWorker(records) {
 }
 
 //=================================================================
-
 
 let db;
 const request = indexedDB.open('employeeManagerDB', 1);

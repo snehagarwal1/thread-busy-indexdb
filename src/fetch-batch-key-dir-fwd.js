@@ -1,5 +1,5 @@
-function fetchBatchKeyDirectionForward(store) {
-    fetchEmployeesInBatchWithNewApi(store, 10, null, null);
+function fetchBatchKeyDirectionForward(store, batchSize) {
+    fetchEmployeesInBatchWithNewApi(store, batchSize, null, null);
 }
 
 function fetchMoreWithNewApi(store, batchSize, keyRange, records) {

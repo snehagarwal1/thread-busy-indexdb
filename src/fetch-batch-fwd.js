@@ -1,7 +1,7 @@
 // Function to fetch records from IndexedDB asynchronously
-function fetchBatchForward(store) {
+function fetchBatchForward(store, batchSize) {
     let totalFetchTime = 0;
-    fetchEmployeesInBatch(store, 10, null, totalFetchTime);
+    fetchEmployeesInBatch(store, batchSize, null, totalFetchTime);
 }
 
 //-------GetAll() API for Batch retriving records in forward direction ----------

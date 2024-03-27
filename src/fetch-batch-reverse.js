@@ -1,5 +1,5 @@
-function fetchBatchReverse(store) {
-    fetchRecordsInBatchReverse(store, 10, null);
+function fetchBatchReverse(store, batchSize) {
+    fetchRecordsInBatchReverse(store, batchSize, null);
 }
 
 function fetchRecordsInBatchReverse(store, batchSize, keyRangeReverse) {

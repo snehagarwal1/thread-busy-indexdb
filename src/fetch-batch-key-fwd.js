@@ -1,7 +1,7 @@
 // Function to fetch records from IndexedDB asynchronously
-function fetchBatchKeyForward(store) {
+function fetchBatchKeyForward(store, batchSize) {
 
-    triggerFetchEmployeesByKeysInBatch(store, 10, 1, null, null);
+    triggerFetchEmployeesByKeysInBatch(store, batchSize, 1, null, null);
 }
 
 function triggerFetchEmployeesByKeysInBatch(store, batchSize, keyStart, keys, records) {
