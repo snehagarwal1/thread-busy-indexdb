@@ -30,6 +30,7 @@ HOW TO USE THE DEMO
    thread busyness simulation. 
 <img width="1004" alt="Screenshot 2024-03-29 at 2 20 46 PM" src="https://github.com/snehagarwal1/thread-busy-indexdb/assets/103469166/9eb7a7a7-e789-4540-8a7d-fc7f4e7d702c">
 
+
 5. Check the console to see the cumulative time taken to return all the records.
-
-
+  
+<img width="1009" alt="Screenshot 2024-03-29 at 2 48 04 PM" src="https://github.com/snehagarwal1/thread-busy-indexdb/assets/103469166/2cda7f11-4809-43a4-83e9-2dc8f914bba8">
