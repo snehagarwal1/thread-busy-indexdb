@@ -23,12 +23,12 @@ HOW TO USE THE DEMO
 <img width="751" alt="Screenshot 2024-03-29 at 2 16 55 PM" src="https://github.com/snehagarwal1/thread-busy-indexdb/assets/103469166/c9698e48-94ce-4ecd-bca9-a388f8495bf2">
 
  2. click on the api buttons you are interested in testing
-   1.  fetch In batch fwd = getAll() 
-   2.  fetch in batch by keys fwd = getAllKeys()
-   3.  fetch in batch by keys and direction fwd = getAllEntries('next')
-   4.  fetch in batch reverse = OpenCursor('prev')
-   5.  fetch in Batch by keys reverse = OpenKeyCursor('prev')
-   6.  fetch in batch by key and direction reverse = getAllEntries('prev')
+      1.  fetch In batch fwd = getAll() 
+      2.  fetch in batch by keys fwd = getAllKeys()
+      3.  fetch in batch by keys and direction fwd = getAllEntries('next')
+      4.  fetch in batch reverse = OpenCursor('prev')
+      5.  fetch in Batch by keys reverse = OpenKeyCursor('prev')
+      6.  fetch in batch by key and direction reverse = getAllEntries('prev')
 
 3. You can use the "delete all Employees" button to delete the DB and start a fresh one.
    
